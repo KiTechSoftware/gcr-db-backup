@@ -1,11 +1,10 @@
 #!/bin/sh
-
-echo "Starting backup service..."
-
-# Run backup every day at 2 AM
-while true; do
-    echo "Running database backup..."
-    /backup/backup_script.sh
-    echo "Backup completed. Sleeping for 24 hours..."
-    sleep 86400  # Sleep for 24 hours
-done
+if [ "$1" = "cron" ]; then
+    # Start cron in the background
+    crond
+    # Tail the log file so the container stays alive
+    tail -f /backup/backup_job.log
+else
+    # Execute any command provided
+    exec "$@"
+fi

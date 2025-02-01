@@ -1,22 +1,23 @@
 FROM debian:latest
 
-# Install required packages
-RUN apt-get update && apt-get install -y \
-    postgresql-client \
-    git \
-    gnupg \
-    curl \
-    openssh-client \
-    && rm -rf /var/lib/apt/lists/*
-
 # Set working directory
 WORKDIR /backup
 
 # Copy backup script and entrypoint
-COPY backup_script.sh entrypoint.sh ./
+COPY backup_job backup-db entrypoint.sh /usr/bin/
 
-# Set permissions
-RUN chmod +x backup_script.sh entrypoint.sh
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    mariadb-client git gnupg curl openssh-client bash\
+    && rm -rf /var/lib/apt/lists/* \
+    # Set permissions
+    chmod +x /usr/bin/backup_job /usr/bin/backup-db /usr/bin/entrypoint.sh && \
+    # Add the backup script to the crontab for 24/7 backups
+    echo "0 0 * * * /usr/bin/backup_job >> /backup/backup_job.log 2>&1" > /etc/crontabs/root && \
+    # Ensure cron logs are visible
+    touch /backup/backup_job.log
 
-# Entry point for running backups
-ENTRYPOINT ["/backup/entrypoint.sh"]
+# Copy backup script and entrypoint
+# Start cron and tail the log file
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+CMD ["cron"]
