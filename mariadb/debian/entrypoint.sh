@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# Ensure that the backup log file exists
+touch /backup/backup_job.log
+
 if [ "$1" = "cron" ]; then
     # Start cron in the background
     crond
