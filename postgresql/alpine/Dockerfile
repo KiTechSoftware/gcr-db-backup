@@ -7,7 +7,7 @@ RUN apk add --no-cache postgresql-client git gnupg curl openssh-client
 WORKDIR /backup
 
 # Copy backup script and entrypoint
-COPY backup_script.sh entrypoint.sh ./
+COPY . .
 
 # Set permissions
 RUN chmod +x backup_script.sh entrypoint.sh

@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /backup
 
 # Copy backup script and entrypoint
-COPY backup_script.sh entrypoint.sh ./
+COPY . .
 
 # Set permissions
 RUN chmod +x backup_script.sh entrypoint.sh
